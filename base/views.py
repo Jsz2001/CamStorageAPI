@@ -1,13 +1,14 @@
-from rest_framework import generics, mixins
-from rest_framework.response import Response
-from django.shortcuts import render
+from rest_framework import generics
+from rest_framework import filters
 
 from api.mixins import UserQuerySetMixin
+from api.filters import GearFilter, CameraFilter, BrandFilter
 
 from .models import Camera, Brand, Gear
 from .serializers import CameraSerializer, CameraDetailSerializer, BrandSerializer, GearSerializer
 
 class CameraListCreateView(
+    CameraFilter,
     UserQuerySetMixin,
     generics.ListCreateAPIView,):
     queryset = Camera.objects.all()
@@ -26,6 +27,7 @@ class CameraDetailView(
 
 
 class UserBrandListCreateView(
+    BrandFilter,
     UserQuerySetMixin,
     generics.ListCreateAPIView):
     '''
@@ -40,6 +42,7 @@ class UserBrandListCreateView(
 
 
 class AllBrandListCreateView(
+    BrandFilter,
     generics.ListCreateAPIView):
     '''
     See all brands / list a new one
@@ -61,10 +64,12 @@ class BrandDetailView(
 
 
 class GearListCreateView(
+    GearFilter,
     UserQuerySetMixin,
     generics.ListCreateAPIView,):
     queryset = Gear.objects.all()
     serializer_class = GearSerializer
+
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)   

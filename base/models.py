@@ -1,6 +1,5 @@
 from django.db import models
 from django.conf import settings
-from django.utils.translation import gettext_lazy as _
 
 User = settings.AUTH_USER_MODEL
 
@@ -45,6 +44,7 @@ class Gear(models.Model):
     gear_type = models.CharField(max_length=7, choices=GearType.choices, default=GearType.OTHER)
     price = models.DecimalField(max_digits=15, decimal_places=2, null=True)
     quantity = models.IntegerField(default=1)
+    note = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return self.name

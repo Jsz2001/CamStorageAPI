@@ -5,6 +5,7 @@ from rest_framework import generics
 
 from .models import UserData
 from .serializers import UserSerializer, UserProfileSerializer
+from .filters import UserFilter
 
 from .mixins import ProfileQuerySetMixin
 
@@ -29,8 +30,10 @@ def getRoutes(request):
         'api/users/<str:username>/brands',
         'api/users/<str:username>/brands/<str:brand-name>',
         'api/users/-/brands',
-
-
+        '---------------------------------------------',
+        'Gear_routes:',
+        'api/users/<str:username>/gears',
+        'api/users/<str:username>/gears/<int:pk>',
     ]
 
     return Response(routes)
@@ -47,7 +50,8 @@ class RegisterView(generics.CreateAPIView,):
         return Response(serializer.data)
     
 
-class UserListView(generics.ListAPIView,):
+class UserListView(UserFilter,
+                   generics.ListAPIView):
     queryset = UserData.objects.all()
     serializer_class = UserProfileSerializer
 

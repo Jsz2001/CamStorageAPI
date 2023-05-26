@@ -12,7 +12,4 @@ urlpatterns = [
     path('login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('login/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 
-    # path('users/', views.UserListView.as_view(), name='user-list'),
-    # path('users/<str:username>/', views.UserProfileView.as_view(), name='user-detail'),
-
 ]

@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from rest_framework.reverse import reverse
+from rest_framework.response import Response
+import json
 
 from api.serializers import UserCameraSerializer, BrandListerSerializer
 
@@ -88,7 +90,6 @@ class CameraSerializer(serializers.ModelSerializer):
     
     def get_detail_url(self, obj):
         request = self.context.get('request') # self.request
-        
         if request is None:
             return None
         return reverse("camera-detail", kwargs={"pk": obj.pk, "username": obj.user}, 
@@ -103,6 +104,7 @@ class CameraSerializer(serializers.ModelSerializer):
 
 class CameraDetailSerializer(serializers.ModelSerializer):
     owner = UserCameraSerializer(source='user', read_only=True)
+    related_gear = serializers.SerializerMethodField()
     class Meta:
         model = Camera
         fields = [            
@@ -112,7 +114,13 @@ class CameraDetailSerializer(serializers.ModelSerializer):
             'owner',
             'price',
             'note',
+            'related_gear'
             ]
+        
+    def get_related_gear(self, obj):
+        result = (obj.gear_set.values())
+        print(result)
+        return (result)
         
     def to_representation(self, instance):
         serializer_context={'request': self.context.get('request')}
@@ -133,17 +141,27 @@ class CamSlugRelatedField(serializers.SlugRelatedField):
 class GearSerializer(serializers.ModelSerializer):
     camera = CamSlugRelatedField(many=True, slug_field='name')
     owner = UserCameraSerializer(source='user', read_only=True)
+    detail_url = serializers.SerializerMethodField(read_only=True)
     class Meta: 
         model = Gear
         fields = [
             'name',
             'brand',
             'owner',
+            'detail_url',
             'gear_type',
+            'note',
             'price',
             'quantity',
             'camera',
             ]
+        
+    def get_detail_url(self, obj):
+        request = self.context.get('request') # self.request
+        if request is None:
+            return None
+        return reverse("gear-detail", kwargs={"pk": obj.pk, "username": obj.user}, 
+                       request=request)
         
     def to_representation(self, instance):
         serializer_context={'request': self.context.get('request')}
