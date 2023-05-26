@@ -10,4 +10,4 @@ The Camera Equipment RESTful API is a tool built utilizing Python, Django REST F
 
 3. Equipment and Lens Management: The API enables users to manage their registered equipment effortlessly. Users can update all information, delete items, and retrieve detailed information about their gear.
 
-4. Search and Filtering: Users can perform advanced searches and apply filters to quickly locate specific camera equipment or lenses. Filtering options may include model name, brand, gear type.
+4. Search Filtering and Ordering: Users can perform advanced searches and apply filters to quickly locate specific camera equipment or lenses. Filtering options differ for specific resources, but is applicable to brand, user, and gear. Options for filtering include model name, brand name, gear type, etc. 
