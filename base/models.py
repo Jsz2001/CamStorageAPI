@@ -39,7 +39,7 @@ class Gear(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     brand = models.ForeignKey(Brand, on_delete=models.SET_NULL, null=True, blank=True)
-    camera = models.ManyToManyField(Camera)
+    camera = models.ManyToManyField(Camera, related_name='gears')
     name = models.CharField(max_length=150)
     gear_type = models.CharField(max_length=7, choices=GearType.choices, default=GearType.OTHER)
     price = models.DecimalField(max_digits=15, decimal_places=2, null=True)

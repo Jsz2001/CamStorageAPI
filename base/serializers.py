@@ -1,7 +1,5 @@
 from rest_framework import serializers
 from rest_framework.reverse import reverse
-from rest_framework.response import Response
-import json
 
 from api.serializers import UserCameraSerializer, BrandListerSerializer
 
@@ -45,23 +43,6 @@ class BrandSerializer(serializers.ModelSerializer):
         brand, created_bool = Brand.objects.get_or_create(name=brand_name, 
                                                           defaults=validated_data)
         return brand
-    
-
-# class BrandCameraSerializer(serializers.ModelSerializer):
-#     lister = BrandListerSerializer(source='user', read_only=True)
-#     class Meta:
-#         model = Brand
-#         fields = [
-#             'name',
-#             'website',
-#             'lister',
-#         ]
-    
-#     def create(self, validated_data):
-#         brand_name = validated_data.get('name')
-#         brand, created_bool = Brand.objects.get_or_create(name=brand_name, 
-#                                                           defaults=validated_data)
-#         return brand
     
 
 class CameraSerializer(serializers.ModelSerializer):
@@ -114,12 +95,11 @@ class CameraDetailSerializer(serializers.ModelSerializer):
             'owner',
             'price',
             'note',
-            'related_gear'
+            'related_gear',
             ]
         
     def get_related_gear(self, obj):
-        result = (obj.gear_set.values())
-        print(result)
+        result = (obj.gears.values_list('name', 'gear_type'))
         return (result)
         
     def to_representation(self, instance):
