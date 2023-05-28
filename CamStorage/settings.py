@@ -13,9 +13,12 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 from datetime import timedelta
 
+from dotenv import load_dotenv
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+load_dotenv(BASE_DIR / '.env')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -23,13 +26,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 # SECRET_KEY = 'django-insecure-*-5xc8fd)umu_k$-ikm5+lxc1o%po^rraueap$5a1#4lwz97i3'
 import os
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-*-5xc8fd)umu_k$-ikm5+lxc1o%po^rraueap$5a1#4lwz97i3')
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-*-5xc8fd)umu_k$-ikm5+lxc1o%po^rraueap$5a1#4lwz97i3')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = True
-DEBUG = os.environ.get('DJANGO_DEBUG', '') != 'False'
+DEBUG = os.getenv('DEBUG', '0').lower() in ['true', 't', '1']
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split(' ')
+
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if RENDER_EXTERNAL_HOSTNAME:    
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
 
 
 # Application definition
@@ -140,16 +147,27 @@ WSGI_APPLICATION = 'CamStorage.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+import dj_database_url
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'cam_api_datab',
-        'USER': 'postgres',
-        'PASSWORD': 'Jsz0419',
-        'HOST': '127.0.0.1',
-        'PORT': '5432'
-    }
-}
+        'default': dj_database_url.parse(os.environ.get('DATABASE_URL'), conn_max_age=600),
+}    
+    #     'default': {
+    #     'ENGINE': 'django.db.backends.postgresql',
+    #     'NAME': 'railway',
+    #     'USER': 'postgres',
+    #     'PASSWORD': 'IA70NewSit2OmhzVwWVq',
+    #     'HOST': 'containers-us-west-38.railway.app',
+    #     'PORT': '7722'
+    # }
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.postgresql',
+    #     'NAME': 'cam_api_datab',
+    #     'USER': 'postgres',
+    #     'PASSWORD': 'Jsz0419',
+    #     'HOST': '127.0.0.1',
+    #     'PORT': '5432'
+    # }
 
 
 # Password validation
@@ -189,12 +207,6 @@ USE_TZ = True
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'api.UserData'
-
-# Update database configuration from $DATABASE_URL.
-import dj_database_url
-db_from_env = dj_database_url.config(conn_max_age=500)
-DATABASES['default'].update(db_from_env)
-
 
 
 # Static files (CSS, JavaScript, Images)
