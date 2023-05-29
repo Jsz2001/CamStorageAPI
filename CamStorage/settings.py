@@ -29,10 +29,9 @@ import os
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-*-5xc8fd)umu_k$-ikm5+lxc1o%po^rraueap$5a1#4lwz97i3')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = True
 DEBUG = os.getenv('DEBUG', '0').lower() in ['true', 't', '1']
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split(' ')
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS')
 
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 if RENDER_EXTERNAL_HOSTNAME:    
@@ -150,7 +149,7 @@ WSGI_APPLICATION = 'CamStorage.wsgi.application'
 import dj_database_url
 
 DATABASES = {
-        'default': dj_database_url.parse(os.environ.get('DATABASE_URL'), conn_max_age=600),
+    'default': dj_database_url.parse(os.environ.get('DATABASE_URL'), conn_max_age=600),
 }    
     #     'default': {
     #     'ENGINE': 'django.db.backends.postgresql',
@@ -212,11 +211,11 @@ AUTH_USER_MODEL = 'api.UserData'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
-# The absolute path to the directory where collectstatic will collect static files for deployment.
-STATIC_ROOT = BASE_DIR / 'staticfiles'
-
 # The URL to use when referring to static files (where they will be served from)
 STATIC_URL = '/static/'
+
+# The absolute path to the directory where collectstatic will collect static files for deployment.
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 
 # Simplified static file serving.
