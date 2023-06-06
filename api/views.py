@@ -12,6 +12,9 @@ from .mixins import ProfileQuerySetMixin
 
 @api_view(['GET'])
 def getRoutes(request):
+    '''
+    All avaiable routes to access/interact with resources
+    '''
     routes = [
         'Auth_routes:',
         'login',
@@ -40,6 +43,9 @@ def getRoutes(request):
 
 @permission_classes([AllowAny])
 class RegisterView(generics.CreateAPIView,):
+    '''
+    Register as a user of CamStorageAPI
+    '''
     queryset = UserData.objects.all()
     serializer_class = UserSerializer
 
@@ -52,11 +58,18 @@ class RegisterView(generics.CreateAPIView,):
 
 class UserListView(UserFilter,
                    generics.ListAPIView):
+    '''
+    See all registered users
+    (search users by username, first name, or last name)
+    '''
     queryset = UserData.objects.all()
     serializer_class = UserProfileSerializer
 
 
 class UserProfileView(ProfileQuerySetMixin, generics.RetrieveUpdateAPIView):
+    '''
+    View your profile / update user information
+    '''
     queryset = UserData.objects.all()
     serializer_class = UserProfileSerializer
     lookup_field = 'username'

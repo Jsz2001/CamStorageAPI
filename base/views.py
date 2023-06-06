@@ -25,6 +25,10 @@ class CameraListCreateView(
 class CameraDetailView(
     UserQuerySetMixin,
     generics.RetrieveUpdateDestroyAPIView,):
+    '''
+    View specific camera / update camera information / delete camera
+    (only cameras stored by user)
+    '''
     queryset = Camera.objects.all()
     serializer_class = CameraDetailSerializer
     lookup_field = 'pk'
@@ -62,6 +66,10 @@ class AllBrandListCreateView(
 class BrandDetailView(
     UserQuerySetMixin,
     generics.RetrieveUpdateDestroyAPIView,):
+    '''
+    View specific brand / update brand information / delete brand
+    (only brands listed by user)
+    '''
     queryset = Brand.objects.all()
     serializer_class = BrandSerializer
     lookup_field = 'name'
@@ -85,6 +93,10 @@ class GearListCreateView(
 class GearDetailView(
     UserQuerySetMixin,
     generics.RetrieveUpdateDestroyAPIView,):
+    '''
+    View specific gear / update gear information / delete gear
+    (only gear stored by user)
+    '''
     queryset = Gear.objects.all()
     serializer_class = GearSerializer
     lookup_field = 'pk'
