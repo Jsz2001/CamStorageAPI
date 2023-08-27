@@ -21,7 +21,6 @@ class Camera(models.Model):
     price = models.DecimalField(max_digits=15, decimal_places=2, null=True)
     note = models.TextField(blank=True, null=True)
 
-
     def __str__(self):
         return self.name
     
@@ -35,7 +34,6 @@ class Gear(models.Model):
         MICROPHONE = 'MIC',
         TRIPOD = 'TRIPOD',
         OTHER = 'OTHER'
-
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     brand = models.ForeignKey(Brand, on_delete=models.SET_NULL, null=True, blank=True)

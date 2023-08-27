@@ -1,7 +1,6 @@
 from rest_framework import filters
 
 
-
 class UserFilter():
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['username', 'first_name', 'last_name']

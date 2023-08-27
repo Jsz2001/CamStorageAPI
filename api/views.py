@@ -14,6 +14,7 @@ from .mixins import ProfileQuerySetMixin
 def getRoutes(request):
     '''
     All avaiable routes to access/interact with resources
+    See 
     '''
     routes = [
         'Auth_routes:',
