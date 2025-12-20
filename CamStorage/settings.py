@@ -26,12 +26,17 @@ load_dotenv(BASE_DIR / '.env')
 # SECURITY WARNING: keep the secret key used in production secret!
 # SECRET_KEY = 'django-insecure-*-5xc8fd)umu_k$-ikm5+lxc1o%po^rraueap$5a1#4lwz97i3'
 import os
-SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-*-5xc8fd)umu_k$-ikm5+lxc1o%po^rraueap$5a1#4lwz97i3')
+SECRET_KEY = os.environ["SECRET_KEY"]
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', '0').lower() in ['true', 't', '1']
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',')
+ALLOWED_HOSTS = os.getenv(
+    "ALLOWED_HOSTS",
+    "localhost,127.0.0.1"
+).split(",")
+# Allow Render.com hostname if deployed there
 
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 if RENDER_EXTERNAL_HOSTNAME:    
@@ -148,33 +153,22 @@ WSGI_APPLICATION = 'CamStorage.wsgi.application'
 
 import dj_database_url
 
+# Use DATABASE_URL from env (e.g. Supabase) if provided; otherwise fall back to local config.
+DATABASES = {}
+
+# Default fallback configuration (kept for local development)
+database_url = os.getenv("DATABASE_URL") or os.getenv("DATABASE_URL_SUPABASE")
+if not database_url:
+    raise Exception("DATABASE_URL is not set")
+
 DATABASES = {
-    #'default': dj_database_url.parse(os.environ.get('DATABASE_URL'), conn_max_age=600),
-#}  
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.postgresql',
-    #     'NAME': 'postgres',
-    #     'USER': 'postgres',
-    #     'PASSWORD': 'e0hH7Jz42FvYESPv',
-    #     'HOST': 'db.oizxiemtkqbnlmsdkzgp.supabase.co',
-    #     'PORT': '5432'
-    # }  
-        'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'postgres.oizxiemtkqbnlmsdkzgp',
-        'PASSWORD': 'j4h1zFbtRaAuWi8U',
-        'HOST': 'aws-0-us-west-1.pooler.supabase.com',
-        'PORT': '5432'
-    }
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.postgresql',
-    #     'NAME': 'cam_api_datab',
-    #     'USER': 'postgres',
-    #     'PASSWORD': 'Jsz0419',
-    #     'HOST': '127.0.0.1',
-    #     'PORT': '5432'
-    }
+    "default": dj_database_url.parse(database_url, conn_max_age=600)
+}
+
+# If a DATABASE_URL is set (recommended), parse it and use that configuration.
+database_url = os.getenv('DATABASE_URL') or os.getenv('DATABASE_URL_SUPABASE')
+if database_url:
+    DATABASES['default'] = dj_database_url.parse(database_url, conn_max_age=600)
 
 
 # Password validation
