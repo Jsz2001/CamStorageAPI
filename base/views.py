@@ -1,7 +1,12 @@
 from rest_framework import generics
+from rest_framework.permissions import IsAuthenticated
 
 from api.mixins import UserQuerySetMixin
 from api.filters import GearFilter, CameraFilter, BrandFilter
+from api.models import UserData
+from api.serializers import UserProfileSerializer
+
+from django.db.models import Count, Prefetch
 
 from .models import Camera, Brand, Gear
 from .serializers import CameraSerializer, CameraDetailSerializer, BrandSerializer, GearSerializer
@@ -15,7 +20,14 @@ class CameraListCreateView(
     See all your cameras / store a new one
     (search cameras by name or brand)
     '''
-    queryset = Camera.objects.all()
+    queryset = (
+    Camera.objects
+    .select_related("user", "brand")   # kills per-camera user/brand fetch queries
+    .annotate(
+        brand_camera_count=Count("brand__camera", distinct=True),
+        brand_gear_count=Count("brand__gear", distinct=True),
+    ))
+
     serializer_class = CameraSerializer
 
     def perform_create(self, serializer):
@@ -83,7 +95,14 @@ class GearListCreateView(
     See all your gear / store a new one
     (search gear by name, brand, or type of gear)
     '''
-    queryset = Gear.objects.all()
+    queryset = (
+        Gear.objects
+        .select_related("user", "brand")          # FK joins
+        .prefetch_related(
+            Prefetch("camera", queryset=Camera.objects.only("id", "name", "user_id"))
+        )                                        # M2M prefetch
+        .order_by("name")
+    )
     serializer_class = GearSerializer
 
     def perform_create(self, serializer):
@@ -100,3 +119,13 @@ class GearDetailView(
     queryset = Gear.objects.all()
     serializer_class = GearSerializer
     lookup_field = 'pk'
+
+class UserMeView(generics.RetrieveUpdateAPIView):
+    '''
+    View your profile / update user information
+    '''
+    permission_classes = [IsAuthenticated]
+    serializer_class = UserProfileSerializer
+
+    def get_object(self):
+        return self.request.user

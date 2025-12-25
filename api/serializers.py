@@ -6,6 +6,9 @@ from .models import UserData
 
 
 class UserSerializer(serializers.ModelSerializer):
+    '''
+    Register a new user
+    '''
     class Meta:
         model = UserData
         fields = [
@@ -16,6 +19,9 @@ class UserSerializer(serializers.ModelSerializer):
             'last_name',
             'password'
         ]
+        extra_kwargs = {
+            'password': {'write_only': True}
+        }
 
     def create(self, validated_data):
         user = UserData.objects.create(email=validated_data['email'],
@@ -29,6 +35,9 @@ class UserSerializer(serializers.ModelSerializer):
     
 
 class UserProfileSerializer(serializers.ModelSerializer):
+    '''
+    View your profile / update user information
+    '''
     profile_url = serializers.HyperlinkedIdentityField(
         view_name='user-detail',
         lookup_field = 'username'
@@ -49,6 +58,14 @@ class UserProfileSerializer(serializers.ModelSerializer):
             'total_equipment_count'            
         ]
 
+        read_only_fields = [
+            'username',
+            'profile_url',
+            'user_camera_url',
+            'user_gear_url',
+            'total_equipment_count'
+        ]
+
     def get_user_camera_url(self, obj):
         request = self.context.get('request') # self.request
         return reverse("camera-list", kwargs={"username": obj.username}, 
@@ -67,6 +84,9 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
 
 class UserCameraSerializer(serializers.Serializer):
+    '''
+    View your cameras
+    '''
     username = serializers.CharField(read_only=True)    
     profile_url = serializers.HyperlinkedIdentityField(
         view_name='user-detail',
@@ -75,5 +95,8 @@ class UserCameraSerializer(serializers.Serializer):
 
 
 class BrandListerSerializer(serializers.Serializer):
+    '''
+    View your brands
+    '''
     username = serializers.CharField(read_only=True)
     id = serializers.IntegerField(read_only=True)

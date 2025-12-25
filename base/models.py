@@ -5,9 +5,14 @@ User = settings.AUTH_USER_MODEL
 
 
 class Brand(models.Model):
-    user = models.ForeignKey(User, default=1, null=True, on_delete=models.SET_NULL)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     website = models.CharField(max_length=150, null=True, blank=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["user", "name"], name="uniq_brand_per_user")
+        ]
 
     def __str__(self):
         return self.name
